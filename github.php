@@ -1,21 +1,42 @@
 <?php
 
-// gli create --name <repo-name> --description --private true/false --homepage
-// gli delete --name <repo-name>
+require_once __DIR__ . '/vendor/autoload.php';
 
 $config = require __DIR__ . '/config.php';
 
-$options = getopt('', ['name:', 'description:', 'private', 'homepage:']);
+$climate = new League\CLImate\CLImate();
 
-// $argc >= 2 ||
-if (!isset($options['name'])) {
-    echo 'Usage: php github.php create' . PHP_EOL .
-        '--name <repo-name>'. PHP_EOL .
-        '--description <description>'. PHP_EOL .
-        '--private <default:false>'. PHP_EOL .
-        '--homepage <homepage>';
-    exit(1);
-}
+$climate->arguments->add([
+    'name' => [
+        'prefix' => 'n',
+        'longPrefix' => 'name',
+        'description' => 'Name',
+        'required' => true,
+    ],
+    'description' => [
+        'prefix' => 'd',
+        'longPrefix' => 'description',
+        'description' => 'Description',
+        'noValue' => true,
+    ],
+    'homepage' => [
+        'prefix' => 'h',
+        'longPrefix' => 'homepage',
+        'description' => 'Homepage',
+        'noValue' => true,
+    ],
+    'private' => [
+        'prefix' => 'p',
+        'longPrefix' => 'private',
+        'description' => 'Private',
+        'defaultValue' => false,
+    ],
+    'help' => [
+        'longPrefix' => 'help',
+        'description' => 'Prints a usage statement',
+        'noValue' => true,
+    ],
+]);
 
 if (!is_array($config)) {
     echo 'Config your configuration file.';
@@ -25,17 +46,38 @@ if (!isset($config['token'])) {
     echo 'Set your access token.';
     exit(1);
 }
-$request = [
-    'name' => $options['name'],
-    'description' => $options['description'],
-    'private' => !$options['private'],
-    'homepage' => $options['homepage'],
-];
 
+
+if ($climate->arguments->defined('help')) {
+    $climate->usage();
+    exit(0);
+}
+
+if (!$climate->arguments->defined('name')) {
+    $climate->error('The following arguments are required: [-n name, --name name]');
+    exit(0);
+}
+
+$climate->arguments->parse();
+
+$request = [];
+$request['name'] = $climate->arguments->get('name');
+
+if ($climate->arguments->defined('description')) {
+    $request['description'] = $climate->arguments->get('description');
+}
+
+if ($climate->arguments->defined('homepage')) {
+    $request['homepage'] = $climate->arguments->get('homepage');
+}
+
+if ($climate->arguments->defined('private')) {
+    $request['private'] = $climate->arguments->get('private');
+}
 
 $url = 'https://api.github.com/user/repos';
 $options = [
-    CURLOPT_USERAGENT => 'Awesome-Octocat-App',
+    CURLOPT_USERAGENT => 'gli user-agent',
     CURLOPT_HTTPHEADER => [
         'Authorization: token ' . $config['token'],
     ],
@@ -43,8 +85,9 @@ $options = [
     CURLOPT_RETURNTRANSFER => true
 ];
 
-
 $curl = curl_init($url);
 curl_setopt_array($curl, $options);
-curl_exec($curl);
+if (!curl_exec($curl)) {
+    $climate->error(sprintf('Curl error: %s', curl_error($curl)));
+}
 curl_close($curl);
