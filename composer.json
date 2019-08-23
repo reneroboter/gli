@@ -1,4 +1,15 @@
 {
+    "name": "reneroboter/gli",
+    "description": "gli is a little helper for my daily work with git services like github or bitbucket.",
+    "keywords": ["gli","php", "terminal", "command", "git"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "René Backhaus",
+            "email": "rene.roboter@posteo.de",
+            "role": "Developer"
+        }
+    ],
     "require": {
         "league/climate": "^3.5"
     }
