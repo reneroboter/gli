@@ -13,5 +13,10 @@
     "require": {
         "league/climate": "^3.5",
         "php": "^7.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "reneroboter\\": "src/"
+        }
     }
 }
