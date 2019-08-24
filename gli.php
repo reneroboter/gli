@@ -9,7 +9,7 @@ require_once __DIR__ . '/bootstrap.php';
 
 $climate = new League\CLImate\CLImate();
 $whiteList = ['create', 'delete', 'list'];
-$command = $argv[1];
+$command = $argv[1] ?? null;
 
 if($argc < 2 || !\in_array($command, $whiteList, true)) {
     $climate->out('gli 0.0.1');

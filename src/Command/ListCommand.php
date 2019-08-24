@@ -38,7 +38,7 @@ class ListCommand implements CommandInterface
         $commandResult->setHandler(function ($data) {
             $repositories = [];
             foreach (json_decode($data, true) as $repository) {
-                $visibility = $repository['private'] ? '+' : '-';
+                $visibility = $repository['private'] ? '-' : '+';
                 $repositories[] = ' (' . $visibility . ') ('. $repository['owner']['login'] .') ' . $repository['name'];
             }
             return $repositories;
