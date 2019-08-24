@@ -25,7 +25,7 @@ class App
         $this->config = $config;
     }
 
-    public function run(string $command)
+    public function run(string $command): void
     {
         $namespace = 'reneroboter\gli\Command\\';
         $className = $namespace . ucfirst($command) . 'Command';
