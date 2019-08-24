@@ -37,9 +37,11 @@ class CurlService
         $options = $this->buildOptions($commandResult);
         $curl = curl_init($url);
         curl_setopt_array($curl, $options);
-        if (!$result = curl_exec($curl)) {
-            $this->climate->error(sprintf('Curl error: %s', curl_error($curl)));
+        $result = curl_exec($curl);
+        if ($result === false) {
+            $this->climate->error(sprintf('Curl error: %s', curl_errno($curl)));
         }
+
         $handlerResult = $commandResult->getHandler()($result);
         if (is_array($handlerResult)) {
             $this->climate->columns($handlerResult);
@@ -63,9 +65,12 @@ class CurlService
             CURLOPT_HTTPHEADER => [
                 'Authorization: token ' . $this->config['token'],
             ],
-            CURLOPT_RETURNTRANSFER => true // todo turn of only for specific commands?
+            CURLOPT_RETURNTRANSFER => true
         ];
 
+        if ($commandResult->getMethod() === 'DELETE') {
+            $options[CURLOPT_CUSTOMREQUEST] = $commandResult->getMethod();
+        }
         if ($commandResult->getData()) {
             $options[CURLOPT_POSTFIELDS] = json_encode($commandResult->getData());
 

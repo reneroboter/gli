@@ -1,6 +1,7 @@
 <?php
 
 use reneroboter\gli\Command\CreateCommand;
+use reneroboter\gli\Command\DeleteCommand;
 use reneroboter\gli\Command\ListCommand;
 use reneroboter\gli\Service\CurlService;
 
@@ -32,8 +33,7 @@ switch ($command) {
         $commandResult = (new ListCommand($climate))->handle();
         break;
     case 'delete':
-        // do delete
-        exit('Not implement yet ...');
+        $commandResult = (new DeleteCommand($climate))->handle();
         break;
 }
 
