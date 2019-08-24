@@ -3,6 +3,7 @@
 namespace reneroboter\gli\Command;
 
 use League\CLImate\CLImate;
+use reneroboter\gli\Entity\CommandResult;
 
 class CreateCommand implements CommandInterface
 {
@@ -21,12 +22,29 @@ class CreateCommand implements CommandInterface
     }
 
     /**
-     * @return array
+     * @return CommandResult
      */
-    public function handle(): array
+    public function handle(): CommandResult
     {
+        $commandResult = new CommandResult();
         $this->addOptions();
-        return $this->processOptions();
+        $data = $this->processOptions();
+        $commandResult->setData($data);
+        $commandResult->setMethod('GET');
+        $commandResult->setEndpoint('/user/repos');
+        $commandResult->setHandler(function ($data) {
+            $createdRepository = json_decode($data, true);
+            $result = 'Created successfully '
+                . $createdRepository['html_url']
+                . PHP_EOL
+                . 'git remote add origin '
+                . $createdRepository['ssh_url']
+                . PHP_EOL
+                . 'git push -u origin master'
+                . PHP_EOL;
+            return $result;
+        });
+        return $commandResult;
     }
 
     /**
@@ -57,7 +75,7 @@ class CreateCommand implements CommandInterface
                 'prefix' => 'p',
                 'longPrefix' => 'private',
                 'description' => 'Private',
-                'defaultValue' => false,
+                'noValue' => true,
             ],
             'help' => [
                 'longPrefix' => 'help',

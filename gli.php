@@ -1,40 +1,35 @@
 <?php
 
 use reneroboter\gli\Command\CreateCommand;
+use reneroboter\gli\Command\ListCommand;
+use reneroboter\gli\Service\CurlService;
 
 require_once __DIR__ . '/bootstrap.php';
 
 $climate = new League\CLImate\CLImate();
 $whiteList = ['create', 'delete', 'list'];
 $command = $argv[1];
+
 if($argc < 2 || !\in_array($command, $whiteList, true)) {
-    $data = [
-        [
-            'create',
-            'Create a repository',
-        ],
-        [
-            'delete',
-            'Delete a given repository',
-        ],
-        [
-            'list',
-            'List all your repositories',
-        ],
-    ];
-    $climate->out('Usage:');
-    $climate->table($data);
+    $climate->darkGray('gli 0.0.1');
+    $climate->br();
+    $climate->darkGray('Usage:');
+    $climate->lightGray('command: [arguments] [options]');
+    $climate->br();
+    $climate->darkGray('Available commands:');
+    $climate->lightGray('create: Create a repository');
+    $climate->lightGray('delete: Delete a given repository');
+    $climate->lightGray('list: List all your repositories');
     exit(1);
 }
 
-$request = [];
+$commandResult = null;
 switch ($command) {
     case 'create':
-        $request = (new CreateCommand($climate))->handle();
+        $commandResult = (new CreateCommand($climate))->handle();
         break;
     case 'list':
-        // do list
-        exit('Not implement yet ...');
+        $commandResult = (new ListCommand($climate))->handle();
         break;
     case 'delete':
         // do delete
@@ -42,20 +37,11 @@ switch ($command) {
         break;
 }
 
-// handle request
-$url = 'https://api.github.com/user/repos';
-$options = [
-    CURLOPT_USERAGENT => 'gli user-agent',
-    CURLOPT_HTTPHEADER => [
-        'Authorization: token ' . $config['token'],
-    ],
-    CURLOPT_POSTFIELDS => json_encode($request),
-    CURLOPT_RETURNTRANSFER => true
-];
 
-$curl = curl_init($url);
-curl_setopt_array($curl, $options);
-if (!curl_exec($curl)) {
-    $climate->error(sprintf('Curl error: %s', curl_error($curl)));
+if (!$commandResult) {
+    $climate->error('Something get wrong ...');
+    exit(1);
 }
-curl_close($curl);
+
+$curlService = new CurlService($climate, $config);
+$curlService->process($commandResult);
