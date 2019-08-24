@@ -12,15 +12,15 @@ $whiteList = ['create', 'delete', 'list'];
 $command = $argv[1];
 
 if($argc < 2 || !\in_array($command, $whiteList, true)) {
-    $climate->darkGray('gli 0.0.1');
+    $climate->out('gli 0.0.1');
     $climate->br();
-    $climate->darkGray('Usage:');
-    $climate->lightGray('command: [arguments] [options]');
+    $climate->out('Usage:');
+    $climate->out('command: [arguments] [options]');
     $climate->br();
-    $climate->darkGray('Available commands:');
-    $climate->lightGray('create: Create a repository');
-    $climate->lightGray('delete: Delete a given repository');
-    $climate->lightGray('list: List all your repositories');
+    $climate->out('Available commands:');
+    $climate->out('create: Create a repository');
+    $climate->out('delete: Delete a given repository');
+    $climate->out('list: List all your repositories');
     exit(1);
 }
 

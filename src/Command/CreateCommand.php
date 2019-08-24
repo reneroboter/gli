@@ -93,12 +93,12 @@ class CreateCommand implements CommandInterface
         $request = [];
         if ($this->climate->arguments->defined('help')) {
             $this->climate->usage();
-            exit(0);
+            exit(1);
         }
 
         if (!$this->climate->arguments->defined('name')) {
-            $this->climate->error('The following arguments are required: [-n name, --name name]');
-            exit(0);
+            $this->climate->usage();
+            exit(1);
         }
 
         $this->climate->arguments->parse();

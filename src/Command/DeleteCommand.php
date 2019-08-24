@@ -67,12 +67,12 @@ class DeleteCommand implements CommandInterface
     {
         if ($this->climate->arguments->defined('help')) {
             $this->climate->usage();
-            exit(0);
+            exit(1);
         }
 
         if (!$this->climate->arguments->defined('repo') || !$this->climate->arguments->defined('owner')) {
-            $this->climate->error('The following arguments are required: [-r repo, --repo repo, -o owner, --owner owner]');
-            exit(0);
+            $this->climate->usage();
+            exit(1);
         }
 
         $this->climate->arguments->parse();
