@@ -3,3 +3,4 @@ config.php
 vendor
 gli.phar
 gli.phar.gz
+.phpunit.result.cache

@@ -39,7 +39,6 @@ class App
                     $this->climate->error('Something get wrong ...');
                     exit(1);
                 }
-
                 $curlService = new CurlService($this->climate, $this->config);
                 $curlService->process($commandResult);
             }

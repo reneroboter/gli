@@ -63,13 +63,11 @@ class CreateCommand implements CommandInterface
                 'prefix' => 'd',
                 'longPrefix' => 'description',
                 'description' => 'Description',
-                'noValue' => true,
             ],
             'homepage' => [
                 'prefix' => 'h',
                 'longPrefix' => 'homepage',
                 'description' => 'Homepage',
-                'noValue' => true,
             ],
             'private' => [
                 'prefix' => 'p',
