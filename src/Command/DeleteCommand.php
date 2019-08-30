@@ -31,7 +31,7 @@ class DeleteCommand implements CommandInterface
         $commandResult = new CommandResult();
         $commandResult->setMethod('DELETE');
         $commandResult->setEndpoint('/repos/' . $processedOptions['owner'] . '/' . $processedOptions['repo']);
-        $commandResult->setHandler(function ($data) {
+        $commandResult->setHandler(function () {
             return 'Works ...';
         });
         return $commandResult;

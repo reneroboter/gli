@@ -35,7 +35,7 @@ class ListCommand implements CommandInterface
         $commandResult->setMethod('GET');
         $commandResult->setEndpoint($endpoint);
 
-        $commandResult->setHandler(function ($data) {
+        $commandResult->setHandler(function (string $data) {
             $repositories = [];
             foreach (json_decode($data, true) as $repository) {
                 $visibility = $repository['private'] ? '-' : '+';

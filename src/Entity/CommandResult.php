@@ -22,11 +22,6 @@ class CommandResult
     private $handler;
 
     /**
-     * @var string
-     */
-    private $result;
-
-    /**
      * @return array|null
      */
     public function getData(): ?array
@@ -90,21 +85,4 @@ class CommandResult
     {
         $this->handler = $handler;
     }
-
-    /**
-     * @return string
-     */
-    public function getResult(): string
-    {
-        return $this->result;
-    }
-
-    /**
-     * @param string $result
-     */
-    public function setResult(string $result): void
-    {
-        $this->result = $result;
-    }
-
 }

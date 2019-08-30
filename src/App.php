@@ -3,7 +3,6 @@
 namespace reneroboter\gli;
 
 use League\CLImate\CLImate;
-use ReflectionClass;
 use ReflectionException;
 use reneroboter\gli\Command\CommandInterface;
 use reneroboter\gli\Service\CurlService;
@@ -19,7 +18,7 @@ class App
      */
     private $config;
 
-    public function __construct(CLImate $climate, $config)
+    public function __construct(CLImate $climate, array $config)
     {
         $this->climate = $climate;
         $this->config = $config;
@@ -31,9 +30,9 @@ class App
         $className = $namespace . ucfirst($command) . 'Command';
 
         try {
-            $reflection = new ReflectionClass($className);
+            /** @var CommandInterface $className */
+            $reflection = new \ReflectionClass($className);
             if ($reflection->isInstantiable()) {
-                /** @var CommandInterface $className */
                 $commandResult = (new $className($this->climate))->handle();
                 if (!$commandResult) {
                     $this->climate->error('Something get wrong ...');

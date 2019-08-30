@@ -32,7 +32,7 @@ class CreateCommand implements CommandInterface
         $commandResult->setData($data);
         $commandResult->setMethod('GET');
         $commandResult->setEndpoint('/user/repos');
-        $commandResult->setHandler(function ($data) {
+        $commandResult->setHandler(function (string $data) {
             $createdRepository = json_decode($data, true);
             $result = 'Created successfully '
                 . $createdRepository['html_url']
