@@ -2,7 +2,15 @@
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-$config = require __DIR__ . '/config.php';
+
+$configPath = __DIR__ . '/config.php';
+
+if (!is_file($configPath)) {
+    echo 'config.php not found!';
+    exit(1);
+}
+
+$config = require $configPath;
 
 if (!is_array($config)) {
     echo 'Config your configuration file.';
