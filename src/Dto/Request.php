@@ -1,8 +1,8 @@
 <?php
 
-namespace reneroboter\gli\Entity;
+namespace reneroboter\gli\Dto;
 
-class CommandResult
+class Request
 {
     /**
      * @var array|null

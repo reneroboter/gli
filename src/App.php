@@ -5,7 +5,7 @@ namespace reneroboter\gli;
 use League\CLImate\CLImate;
 use ReflectionException;
 use reneroboter\gli\Command\CommandInterface;
-use reneroboter\gli\Service\CurlService;
+use reneroboter\gli\Service\HttpService;
 
 class App
 {
@@ -29,17 +29,19 @@ class App
         $namespace = 'reneroboter\gli\Command\\';
         $className = $namespace . ucfirst($command) . 'Command';
 
+        // todo prepare git provider and pass it to $className() ...
+
         try {
             /** @var CommandInterface $className */
             $reflection = new \ReflectionClass($className);
             if ($reflection->isInstantiable()) {
-                $commandResult = (new $className($this->climate))->handle();
-                if (!$commandResult) {
+                $request = (new $className($this->climate))->handle();
+                if (!$request) {
                     $this->climate->error('Something get wrong ...');
                     exit(1);
                 }
-                $curlService = new CurlService($this->climate, $this->config);
-                $curlService->process($commandResult);
+                $httpService = new HttpService($this->climate, $this->config);
+                $httpService->process($request);
             }
         } catch (ReflectionException $e) {
             $this->climate->error('Error: ' . $e->getMessage());

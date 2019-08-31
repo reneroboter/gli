@@ -1,4 +1,5 @@
 <?php
 return [
-    'token' => 'YOUR-ACCESS-TOKEN'
+    'token' => 'YOUR-ACCESS-TOKEN',
+    'provider' => 'YOUR-PROVIDER'
 ];

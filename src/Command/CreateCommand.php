@@ -2,55 +2,27 @@
 
 namespace reneroboter\gli\Command;
 
-use League\CLImate\CLImate;
-use reneroboter\gli\Entity\CommandResult;
+use reneroboter\Command\AbstractCommand;
+use reneroboter\gli\Dto\Request;
+use reneroboter\Provider\GitProviderInterface;
 
-class CreateCommand implements CommandInterface
+class CreateCommand extends AbstractCommand implements CommandInterface
 {
     /**
-     * @var CLImate $climate
+     * @param GitProviderInterface $gitProvider
+     * @return Request
      */
-    protected $climate;
-
-    /**
-     * CreateCommand constructor.
-     * @param CLImate $climate
-     */
-    public function __construct(CLImate $climate)
+    public function handle(GitProviderInterface $gitProvider): Request
     {
-        $this->climate = $climate;
-    }
-
-    /**
-     * @return CommandResult
-     */
-    public function handle(): CommandResult
-    {
-        $commandResult = new CommandResult();
-        $this->addOptions();
-        $data = $this->processOptions();
-        $commandResult->setData($data);
-        $commandResult->setMethod('GET');
-        $commandResult->setEndpoint('/user/repos');
-        $commandResult->setHandler(function (string $data) {
-            $createdRepository = json_decode($data, true);
-            $result = 'Created successfully '
-                . $createdRepository['html_url']
-                . PHP_EOL
-                . 'git remote add origin '
-                . $createdRepository['ssh_url']
-                . PHP_EOL
-                . 'git push -u origin master'
-                . PHP_EOL;
-            return $result;
-        });
-        return $commandResult;
+        $this->prepareOptions();
+        $processedOptions = $this->processOptions();
+        return $gitProvider->create($processedOptions);
     }
 
     /**
      * @return void
      */
-    protected function addOptions(): void
+    protected function prepareOptions(): void
     {
         $this->climate->arguments->add([
             'name' => [

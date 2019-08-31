@@ -3,9 +3,9 @@
 namespace reneroboter\gli\Service;
 
 use League\CLImate\CLImate;
-use reneroboter\gli\Entity\CommandResult;
+use reneroboter\gli\Dto\Request;
 
-class CurlService
+class HttpService
 {
     /**
      * @var CLImate $climate
@@ -20,6 +20,7 @@ class CurlService
     /**
      * CurlService constructor.
      * @param CLImate $climate
+     * @param array $config
      */
     public function __construct(CLImate $climate, array $config)
     {
@@ -28,13 +29,14 @@ class CurlService
     }
 
     /**
-     * @param CommandResult $commandResult
+     * @param Request $request
      * @return void
      */
-    public function process(CommandResult $commandResult): void
+    public function process(Request $request): void
     {
-        $url = 'https://api.github.com' . $commandResult->getEndpoint();
-        $options = $this->buildOptions($commandResult);
+        // todo use AuthorizationProviderInterface.php ...
+        $url = 'https://api.github.com' . $request->getEndpoint();
+        $options = $this->buildOptions($request);
         $curl = curl_init($url);
         curl_setopt_array($curl, $options);
         $result = curl_exec($curl);
@@ -42,7 +44,7 @@ class CurlService
             $this->climate->error(sprintf('Curl error: %s', curl_errno($curl)));
         }
 
-        $handlerResult = $commandResult->getHandler()($result);
+        $handlerResult = $request->getHandler()($result);
         if (is_array($handlerResult)) {
             $this->climate->columns($handlerResult);
         } else {
@@ -55,10 +57,10 @@ class CurlService
     }
 
     /**
-     * @param CommandResult $commandResult
+     * @param Request $request
      * @return array
      */
-    protected function buildOptions(CommandResult $commandResult): array
+    protected function buildOptions(Request $request): array
     {
         $options = [
             CURLOPT_USERAGENT => 'gli user-agent',
@@ -68,11 +70,11 @@ class CurlService
             CURLOPT_RETURNTRANSFER => true
         ];
 
-        if ($commandResult->getMethod() === 'DELETE') {
-            $options[CURLOPT_CUSTOMREQUEST] = $commandResult->getMethod();
+        if ($request->getMethod() === 'DELETE') {
+            $options[CURLOPT_CUSTOMREQUEST] = $request->getMethod();
         }
-        if ($commandResult->getData()) {
-            $options[CURLOPT_POSTFIELDS] = json_encode($commandResult->getData());
+        if ($request->getData()) {
+            $options[CURLOPT_POSTFIELDS] = json_encode($request->getData());
 
         }
 

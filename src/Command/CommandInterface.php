@@ -4,9 +4,10 @@
 namespace reneroboter\gli\Command;
 
 
-use reneroboter\gli\Entity\CommandResult;
+use reneroboter\gli\Dto\Request;
+use reneroboter\Provider\GitProviderInterface;
 
 interface CommandInterface
 {
-    public function handle(): CommandResult;
+    public function handle(GitProviderInterface $gitProvider): Request;
 }

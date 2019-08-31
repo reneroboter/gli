@@ -4,40 +4,27 @@
 namespace reneroboter\gli\Command;
 
 
-use League\CLImate\CLImate;
-use reneroboter\gli\Entity\CommandResult;
+use reneroboter\Command\AbstractCommand;
+use reneroboter\gli\Dto\Request;
+use reneroboter\Provider\GitProviderInterface;
 
-class DeleteCommand implements CommandInterface
+class DeleteCommand extends AbstractCommand implements CommandInterface
 {
     /**
-     * @var CLImate $climate
+     * @param GitProviderInterface $gitProvider
+     * @return Request
      */
-    protected $climate;
+    public function handle(GitProviderInterface $gitProvider): Request
+    {
+        $this->prepareOptions();
+        $processedOptions = $this->processOptions();
+        return $gitProvider->delete($processedOptions);
+    }
 
     /**
-     * CreateCommand constructor.
-     * @param CLImate $climate
+     * @return void
      */
-    public function __construct(CLImate $climate)
-    {
-        $this->climate = $climate;
-    }
-
-    public function handle(): CommandResult
-    {
-        $this->addOptions();
-        $processedOptions = $this->processOptions();
-
-        $commandResult = new CommandResult();
-        $commandResult->setMethod('DELETE');
-        $commandResult->setEndpoint('/repos/' . $processedOptions['owner'] . '/' . $processedOptions['repo']);
-        $commandResult->setHandler(function () {
-            return 'Works ...';
-        });
-        return $commandResult;
-    }
-
-    protected function addOptions(): void
+    protected function prepareOptions(): void
     {
         $this->climate->arguments->add([
             'repo' => [
