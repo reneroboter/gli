@@ -9,11 +9,20 @@ use reneroboter\gli\Command\CreateCommand;
 
 final class CreateCommandTest extends TestCase
 {
-    public function testCreateCommand(): void
+    /**
+     * @var CLImate
+     */
+    private $climate;
+
+    protected function setUp(): void
     {
-        $climate = new CLImate();
+        $this->climate = new CLImate();
+    }
+
+    public function testCreateValidCommandResultObject(): void
+    {
         $GLOBALS['argv'] = ['gli.php', 'create', '--name=test', '--description=test', '--homepage=http://example.org'];
-        $createCommand = new CreateCommand($climate);
+        $createCommand = new CreateCommand($this->climate);
         $result = $createCommand->handle();
         $this->assertEquals($result->getMethod(), 'GET');
         $this->assertEquals($result->getEndpoint(), '/user/repos');
@@ -21,6 +30,25 @@ final class CreateCommandTest extends TestCase
             'name' => 'test',
             'description' => 'test',
             'homepage' => 'http://example.org'
+        ]);
+
+        $GLOBALS['argv'] = ['gli.php', 'create', '--name=test', '--description=test'];
+        $createCommand = new CreateCommand($this->climate);
+        $result = $createCommand->handle();
+        $this->assertEquals($result->getMethod(), 'GET');
+        $this->assertEquals($result->getEndpoint(), '/user/repos');
+        $this->assertEquals($result->getData(), [
+            'name' => 'test',
+            'description' => 'test',
+        ]);
+
+        $GLOBALS['argv'] = ['gli.php', 'create', '--name=test'];
+        $createCommand = new CreateCommand($this->climate);
+        $result = $createCommand->handle();
+        $this->assertEquals($result->getMethod(), 'GET');
+        $this->assertEquals($result->getEndpoint(), '/user/repos');
+        $this->assertEquals($result->getData(), [
+            'name' => 'test',
         ]);
     }
 }
